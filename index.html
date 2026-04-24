@@ -203,9 +203,72 @@
         .gallery img, .spp-item img, .spp-box img {
             cursor: zoom-in;
         }
+
+        .site-nav {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .site-nav h2 {
+            margin: 0 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.25em;
+            color: #222;
+        }
+        .site-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .site-nav-links a,
+        .site-nav-links span {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .site-nav-links a {
+            color: #333;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            transition: all 0.2s;
+        }
+        .site-nav-links a:hover {
+            background: #333;
+            color: white;
+            transform: translateY(-1px);
+        }
+        .site-nav-links a.current {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+        .site-nav-links span.placeholder {
+            color: #888;
+            background: #f7f7f7;
+            border: 1px dashed #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
+
+    <nav class="site-nav" aria-label="Assignment navigation">
+        <h2>Navigation</h2>
+        <div class="site-nav-links">
+            <a class="current" href="index.html">Assignment 1</a>
+            <a href="assignment2.html">Assignment 2</a>
+            <span class="placeholder">Assignment 3</span>
+            <span class="placeholder">Assignment 4</span>
+        </div>
+    </nav>
+
     <h1>CSE168 Raytracer Assignment 1</h1>
     
     <p>Created by Sophia Vo and Kliment Ho.</p>

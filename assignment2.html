@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE 168 Assignment 2</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 20px 100px 20px;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            font-weight: normal;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        .site-nav {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .site-nav h2 {
+            margin: 0 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.25em;
+            color: #222;
+        }
+        .site-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .site-nav-links a,
+        .site-nav-links span {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .site-nav-links a {
+            color: #333;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            transition: all 0.2s;
+        }
+        .site-nav-links a:hover {
+            background: #333;
+            color: white;
+            transform: translateY(-1px);
+        }
+        .site-nav-links a.current {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+        .site-nav-links span.placeholder {
+            color: #888;
+            background: #f7f7f7;
+            border: 1px dashed #ccc;
+            cursor: not-allowed;
+        }
+        .intro-card,
+        .method-card,
+        .implementation-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 22px;
+            margin: 22px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .slideshow-wrapper {
+            position: relative;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px 70px;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .slide {
+            display: none;
+        }
+        .slide.active {
+            display: block;
+        }
+        .slide h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .slide-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            align-items: start;
+        }
+        .slide-image-box {
+            text-align: center;
+        }
+        .slide-image-box img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            cursor: zoom-in;
+            transition: transform 0.2s, border-color 0.2s;
+            background: #fff;
+        }
+        .slide-image-box img:hover {
+            transform: scale(1.02);
+            border-color: #777;
+        }
+        .caption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: #333;
+            color: white;
+            font-size: 1.6em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .arrow:hover {
+            background: #000;
+            transform: translateY(-50%) scale(1.05);
+        }
+        .arrow.left {
+            left: 16px;
+        }
+        .arrow.right {
+            right: 16px;
+        }
+        .slide-indicator {
+            margin-top: 18px;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+        }
+        code,
+        pre {
+            font-family: "Courier New", monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            line-height: 1.45;
+        }
+        ul,
+        ol {
+            padding-left: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .formula-label {
+            font-weight: bold;
+            margin-top: 12px;
+        }
+        #lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            inset: 0;
+            background: rgba(95, 95, 95, 0.82);
+            cursor: pointer;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        #lightbox.active {
+            display: flex;
+        }
+        #lightbox img {
+            max-width: 96vw;
+            max-height: 94vh;
+            border: 3px solid #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 35px rgba(0,0,0,0.55);
+            cursor: default;
+            background: white;
+        }
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        @media (max-width: 800px) {
+            .slideshow-wrapper {
+                padding: 20px 55px;
+            }
+            .slide-images {
+                grid-template-columns: 1fr;
+            }
+            .arrow {
+                width: 38px;
+                height: 38px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Assignment navigation">
+        <h2>Navigation</h2>
+        <div class="site-nav-links">
+            <a href="index.html">Assignment 1</a>
+            <a class="current" href="assignment2.html">Assignment 2</a>
+            <span class="placeholder">Assignment 3</span>
+            <span class="placeholder">Assignment 4</span>
+        </div>
+    </nav>
+
+    <h1>CSE 168 Assignment 2</h1>
+    <p>Created by Sophia Vo.</p>
+
+    <section class="intro-card">
+        <h2>Extra Implementations</h2>
+        <p>This page compares the base direct-light sampling result against two variance-reduction implementations for area lights: Method 1, which evaluates smooth terms at stratum centers, and Method 2, which uses an analytic formula per stratum.</p>
+    </section>
+
+    <section class="slideshow-wrapper" aria-label="Assignment 2 render comparison slideshow">
+        <button class="arrow left" type="button" onclick="prevSlide()" aria-label="Previous slide">&#8249;</button>
+        <button class="arrow right" type="button" onclick="nextSlide()" aria-label="Next slide">&#8250;</button>
+
+        <div class="slide active">
+            <h3>Slide 1: Direct 3x3</h3>
+            <div class="slide-images">
+                <div class="slide-image-box">
+                    <img src="assets/direct3x3.png" alt="Direct 3x3 base render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Base direct lighting</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/direct3x3-METHOD1.png" alt="Direct 3x3 Method 1 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 1</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/direct3x3-METHOD2.png" alt="Direct 3x3 Method 2 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3>Slide 2: Sphere</h3>
+            <div class="slide-images">
+                <div class="slide-image-box">
+                    <img src="assets/sphere.png" alt="Sphere base render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Base direct lighting</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/sphere-METHOD1.png" alt="Sphere Method 1 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 1</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/sphere-METHOD2.png" alt="Sphere Method 2 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3>Slide 3: Cornell Box</h3>
+            <div class="slide-images">
+                <div class="slide-image-box">
+                    <img src="assets/cornell.png" alt="Cornell box base render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Base direct lighting</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/cornell-METHOD1.png" alt="Cornell box Method 1 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 1</div>
+                </div>
+                <div class="slide-image-box">
+                    <img src="assets/cornell-METHOD2.png" alt="Cornell box Method 2 render" onclick="openLightbox(this.src, this.alt)">
+                    <div class="caption">Method 2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-indicator" id="slide-indicator">Slide 1 of 3</div>
+    </section>
+
+    <section class="method-card">
+        <h2>1. Method 1 — Center-Evaluated Smooth Terms</h2>
+        <p>Instead of evaluating everything at the random light sample <code>x'_k</code>, this method evaluates the smooth terms at the center of the stratum <code>c_k</code>.</p>
+
+        <p class="formula-label">For each stratum:</p>
+        <pre>c_k  = deterministic center of the cell
+x'_k = random point inside that same cell</pre>
+
+        <p class="formula-label">Then compute:</p>
+        <pre>f(x, wi(c_k), wo)
+G(x, c_k)
+V(x, x'_k)</pre>
+
+        <p class="formula-label">Estimator:</p>
+        <pre>Ld ≈ Li * (A / N) * Σ f(x, wi(c_k), wo) * G(x, c_k) * V(x, x'_k)</pre>
+
+        <p>This means the BRDF and geometry terms are deterministic, while visibility remains random. This reduces noise because only the shadow test is random.</p>
+
+        <h3>Visual Result</h3>
+        <p>Fully lit areas become smoother because they are no longer affected by random BRDF or distance variation. Noise mostly remains near shadow boundaries, where some samples are visible and some are blocked.</p>
+
+        <h3>Tradeoff</h3>
+        <p>This method is slightly biased because it does not evaluate the full integrand at the exact same random sample location. It mixes a center-sampled smooth term with a randomly sampled visibility term.</p>
+    </section>
+
+    <section class="method-card">
+        <h2>2. Method 2 — Analytic Formula Per Stratum</h2>
+        <p>Method 2 improves on Method 1 by computing the exact analytic unshadowed irradiance for each stratum, then multiplying that stratum's analytic contribution by one sampled visibility value.</p>
+
+        <p class="formula-label">Per-stratum contribution:</p>
+        <pre>contribution_k ≈ analytic_unshadowed_contribution_for_stratum_k * V(x, x'_k)</pre>
+
+        <p>Each stratum is treated as a mini area light. If the whole light is visible, the result becomes exactly the analytic solution with zero noise. If part of the light is blocked, noise only appears near soft-shadow boundaries because visibility is the only random part.</p>
+
+        <h3>Why It Is Better Than Method 1</h3>
+        <p>Method 1 evaluates the smooth terms at the stratum center, which is only an approximation. Method 2 integrates the smooth unoccluded irradiance over the whole stratum analytically, so the non-visibility part is much more accurate.</p>
+    </section>
+
+    <section class="implementation-card">
+        <h2>Implementation Notes</h2>
+
+        <h3>Method 1</h3>
+        <p>Method 1 changes only the Monte Carlo area-light estimator.</p>
+        <p class="formula-label">Current behavior:</p>
+        <pre>BRDF, geometry, and visibility are all evaluated at random sample x'_k.</pre>
+
+        <p class="formula-label">Method 1 behavior:</p>
+        <pre>BRDF and geometry are evaluated at stratum center c_k.
+Visibility is evaluated at random sample x'_k.</pre>
+
+        <p>With <code>lightstratify</code> on, each stratum has stable BRDF and geometry terms evaluated at the cell center, while visibility is randomly evaluated inside the cell. Smooth lighting variation becomes much less noisy, and noise mostly remains near shadow boundaries.</p>
+
+        <h3>Important Behavior</h3>
+        <p>This method only meaningfully activates when:</p>
+        <ul>
+            <li><code>integrator direct</code> is enabled</li>
+            <li><code>lightstratify on</code> is enabled</li>
+            <li><code>lightsamples</code> is a perfect square</li>
+        </ul>
+        <p>If <code>lightstratify</code> is off, the code falls back to the original random Monte Carlo behavior because there are no stratum centers to use.</p>
+
+        <h3>Method 2</h3>
+        <p>Method 2 makes each stratum act like a tiny parallelogram light. Instead of evaluating the smooth terms at the stratum center, it analytically integrates the unshadowed diffuse contribution over the entire stratum, then multiplies by one sampled visibility value.</p>
+
+        <p class="formula-label">For each stratum:</p>
+        <ol>
+            <li>Build a smaller <code>QuadLight</code> representing that stratum.</li>
+            <li>Pick one random point inside the stratum.</li>
+            <li>Trace one visibility ray to that random point.</li>
+            <li>If visible, add the analytic diffuse contribution from the whole stratum. If blocked, add nothing.</li>
+        </ol>
+
+        <p class="formula-label">Method 1 structure:</p>
+        <pre>BRDF/G at stratum center
+visibility at random point</pre>
+
+        <p class="formula-label">Method 2 structure:</p>
+        <pre>diffuse irradiance analytically over the whole stratum
+visibility at random point</pre>
+
+        <p>This is why fully visible regions become nearly noise-free.</p>
+
+        <p class="formula-label">Analytic formula:</p>
+        <pre>Ld = (kd / pi) * Li * irradiance</pre>
+
+        <p class="formula-label">For Method 2, the implementation is:</p>
+        <pre>Diffuse: analytic per stratum
+Specular: keep Method 1 center-sampled approximation
+Visibility: random sample inside stratum</pre>
+    </section>
+
+    <footer>
+        &copy; 2026 CSE 168 Assignment 2 - Sophia Vo
+    </footer>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Expanded render" onclick="event.stopPropagation()">
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        function showSlide(index) {
+            currentSlide = (index + slides.length) % slides.length;
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentSlide);
+            });
+            slideIndicator.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function openLightbox(src, alt) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightboxImg.alt = alt;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
